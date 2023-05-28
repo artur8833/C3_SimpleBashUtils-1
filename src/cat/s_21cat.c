@@ -83,36 +83,39 @@ int CatNumberEmpty(char* filename) {
 }
 
 void v_print(char c) {
-  if (c & 128) {
-    printf("M-");
-    c &= ~128;
-  }
-  if (c < -96) {
-    printf("M-^%c", c + 192);
-  } else if (c < 0) {
-    printf("M-%c", c + 128);
-  } else if (c == 9 || c == 10) {
-    printf("%c", c);
-  } else if (c < 32) {
-    printf("^%c", c + 64);
-  } else if (c < 127) {
-    printf("%c", c);
-  } else {
-    printf("^?");
-  }
+    if (c & 128) {
+        printf("M-");
+        c &= ~128;
+    }
+    if (c < -96) {
+        printf("M-^%c", c + 192);
+    } else if (c < 0) {
+        printf("M-%c", c + 128);
+    } else if (c == 9 || c == 10) {
+        printf("%c", c);
+    } else if (c < 32) {
+        printf("^%c", c + 64);
+    } else if (c < 127) {
+        printf("%c", c);
+    } else {
+        printf("^?");
+    }
 }
 
 
 void CatEndStr(char* filename) {
-    FILE* fp = fopen(filename, "r");
-    char *str;
-    size_t len = 0;
-    size_t read;
-    while ((read = getline(&str, &len, fp)) != -1) {
-        for (int i = 0; i < read; i++)
-            (i == read - 1) ? printf("$%c", str[read - 1]) : printf("%c", str[i]);  
+    FILE* f = fopen(filename, "r");
+    char c;
+    while ((c = getc(f)) != EOF) 
+    {
+        if (c=='\n')
+        {
+            printf("$\n");    
+        }
+        else{
+            v_print(c);
+        }
     }
-
 }
 
 int DelTab(char* filename) {
@@ -146,7 +149,7 @@ int DelTab(char* filename) {
     return 0;
 }
 
-int PrintTab(char* name)
+void PrintTab(char* name)
 {
     char c;
     FILE* f = fopen(name, "r");
@@ -158,12 +161,14 @@ int PrintTab(char* name)
             {
                 printf("^I");
             }
-            else{
+            else
+            {
                 printf("%c",c);
             }
         }
     printf("\n");
     fclose(f);
+    
 }
 
 int same_line_check(const char* str) {
@@ -200,7 +205,6 @@ int main(int arg, char *avrg[]){
                 CatEndStr(avrg[2]);
                 break;
             case 'v':
-
                 break;
             case 'E':
                 CatEndStr(avrg[2]);
