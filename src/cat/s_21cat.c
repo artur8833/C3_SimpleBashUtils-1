@@ -82,6 +82,26 @@ int CatNumberEmpty(char* filename) {
     return 0;
 }
 
+void v_print(char c) {
+  if (c & 128) {
+    printf("M-");
+    c &= ~128;
+  }
+  if (c < -96) {
+    printf("M-^%c", c + 192);
+  } else if (c < 0) {
+    printf("M-%c", c + 128);
+  } else if (c == 9 || c == 10) {
+    printf("%c", c);
+  } else if (c < 32) {
+    printf("^%c", c + 64);
+  } else if (c < 127) {
+    printf("%c", c);
+  } else {
+    printf("^?");
+  }
+}
+
 
 void CatEndStr(char* filename) {
     FILE* fp = fopen(filename, "r");
