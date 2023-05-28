@@ -50,6 +50,7 @@ void CatNumber (char *name)
                 printf("%c",c);
             }
         }
+    
     printf("\n");
     fclose(f);
 }
@@ -162,7 +163,7 @@ int main(int arg, char *avrg[]){
     {
         {"number-nonblank", no_argument, 0, 'b'},    
         {"number", no_argument, 0, 'n'},              
-        {"squeeze-blank", no_argument, 0, 's'},       
+        {"squeeze-blank", no_argument, 0, 's'},    
         {0, 0, 0, 0}
     };
 
@@ -182,7 +183,7 @@ int main(int arg, char *avrg[]){
 
                 break;
             case 'E':
-
+                CatEndStr(avrg[2]);
                 break;
             case 'n':
                 CatNumber(avrg[2]);
@@ -194,14 +195,12 @@ int main(int arg, char *avrg[]){
                 PrintTab(avrg[2]);
                 break;
             case 'T':
-
+                PrintTab(avrg[2]);
                 break;
             case'?':
                 break;
-            
             default:
                 printf("Try cat help \n");
-
         }
     }
 
