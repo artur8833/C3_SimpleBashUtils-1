@@ -5,6 +5,8 @@
 #include <string.h>
 
 
+int check_same_str(const char* c);
+int same_line_check(const char* str);
 
 void print_file(char *name)
 {
@@ -23,33 +25,33 @@ void print_file(char *name)
     }
 }
 
+int check_same_str(const char* c){
+    return !strcmp(c, "/n");
+}
 
-void CatNumberEmpty (char *name)
+
+
+void EndStr(char *name)
 {
-    int count=1;
-    char c;
-    int cc=0;
     FILE* f = fopen(name, "r");
+    char c[4096];
+    
 
-        while ((c=getc(f))!=EOF) 
-        {
-            if(count==1) 
-            {
-                printf("%6d\t%c",count,c);
-                count++;
+        if (fgets(c, 4096, f)) {
+
+            if (same_line_check(c)) {
+                printf("%s", c);
             }
-            if(c=='\n')
-            {
-                printf("%c", c );
-                count++;
+            else {
+                printf("%s", c);
+                
             }
-            else{
-                printf("%c",c);
-            }
-        }
     printf("\n");
     fclose(f);
+    
 }
+
+
 
 int main(int arg, char *avrg[]){
 
@@ -96,3 +98,4 @@ int main(int arg, char *avrg[]){
 
     return 0;
 }
+
