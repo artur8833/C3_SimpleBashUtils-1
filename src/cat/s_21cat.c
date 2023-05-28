@@ -8,6 +8,7 @@
 int same_line_check(const char* str);
 void CatNumber (char *name);
 int CatNumberEmpty(char* filename);
+int tab_check(const char* str);
 
 
 void print_file(char *name)
@@ -124,6 +125,25 @@ int DelTab(char* filename) {
     return 0;
 }
 
+int PrintTab(char* name)
+{
+    char c;
+    FILE* f = fopen(name, "r");
+
+        while ((c=getc(f))!=EOF) 
+        {
+
+            if(c=='\t')
+            {
+                printf("^I");
+            }
+            else{
+                printf("%c",c);
+            }
+        }
+    printf("\n");
+    fclose(f);
+}
 
 int same_line_check(const char* str) {
     return !strcmp(str, "\n");
@@ -158,7 +178,6 @@ int main(int arg, char *avrg[]){
             case 'e':
                 CatEndStr(avrg[2]);
                 break;
-                
             case 'v':
 
                 break;
@@ -172,7 +191,7 @@ int main(int arg, char *avrg[]){
                 DelTab(avrg[2]);
                 break;
             case 't':
-
+                PrintTab(avrg[2]);
                 break;
             case 'T':
 
