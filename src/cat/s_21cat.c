@@ -1,3 +1,4 @@
+#include "s21_cat.h"
 #include <fcntl.h>
 #include <getopt.h>
 #include <stdio.h>
@@ -12,6 +13,16 @@ void CatEndStr(char* filename);
 int DelTab(char* filename);
 void PrintTab(char* name);
 int same_line_check(const char* str);
+
+
+
+
+void (int arg, char* argv[], option *config){
+
+  options = {0};
+
+}
+
 
 int main(int arg, char* argv[]) {
   int c;
@@ -61,6 +72,8 @@ int main(int arg, char* argv[]) {
 }
 
 void print_file(char* name) {
+
+  
   FILE* f = fopen(name, "r");
 
   if (f != NULL) {
