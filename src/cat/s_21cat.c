@@ -31,7 +31,7 @@ void parser(int argc,char *argv[], opt *options)
       {"squeeze-blank", no_argument, 0, 's'},
       {0, 0, 0, 0}};
 
-  while ((opt = getopt_long(argc, argv, "+benstvTV", long_options,
+  while ((opt = getopt_long(argc, argv, "beEnstvTV", long_options,
                           &option_index)) != -1)  
   {
     switch (opt) 
@@ -73,67 +73,77 @@ void parser(int argc,char *argv[], opt *options)
 
 void reader (int argc ,char *argv[], opt *options )
 {
-  int error =0;
-  FILE *file_name = fopen(argv[optind], "r");
-  if(file_name){
-      int start_line=1;
-      // c -- numbers only no-empty lines
-      int count_empty_line = 1;
-      // count line fount line for flags->bor flags->n -- number all output lines
-      int count_all_line = 1;
-      char previous_char = '\n';
-      char next_char = ' ';
-      char ch[1024] = {'\0'};
-
-      while ((*ch= fgetc(file_name))!=EOF){
-          if (options->s==1 && flag_s(previous_char, next_char, *ch))
-          {
-              continue;
-          } 
-          if (options->n==1)
-          {
-              start_line=flag_n(start_line,&count_all_line,*ch);
-          }
-
-          if (options->b==1){
-              flag_b(previous_char, &count_empty_line, *ch);
-          }
-
-          if (options->e==1)
-          {
-              flag_e(*ch);
-          }
-          if (options->v==1)
-          {
-              flag_v(ch);
-          }
-          next_char = previous_char;
-          previous_char = *ch;
-          
-          if(options->t==1 && flag_t(*ch))
-          {
-              continue;
-          }
-
-          if (*ch=='\0')
-          {
-              fputc(*ch,stdout);
-          }
-          else
-          {
-              fputs(ch,stdout);
-          }
-          memset(ch,'\0',1024);
-      }
-
+  if (argv[1][1]=='-')
+  {
+    _Exit (EXIT_SUCCESS);
   }
-  else{
-      printf("Empty name file");
-  }
+  
+  if(argv[optind]){
+        for(int i=1;i<argc;i++){
+                FILE *file_name = fopen(argv[i], "r");
+                if(file_name){
+                    int start_line=1;
+                    // c -- numbers only no-empty lines
+                    int count_empty_line = 1;
+                    // count line fount line for flags->bor flags->n -- number all output lines
+                    int count_all_line = 1;
+                    char previous_char = '\n';
+                    char next_char = ' ';
+                    char ch[1024] = {'\0'};
+                    
+                    while ((*ch= fgetc(file_name))!=EOF)
+                    {
+                        if (options->s==1 && flag_s(previous_char, next_char, *ch))
+                        {
+                            continue;
+                        } 
+                        if (options->n==1)
+                        {
+                            start_line=flag_n(start_line,&count_all_line,*ch);
+                        }
 
+                        if (options->b==1){
+                            flag_b(previous_char, &count_empty_line, *ch);
+                        }
+
+                        if (options->e==1)
+                        {
+                            flag_e(*ch);
+                        }
+                        if (options->v==1)
+                        {
+                            flag_v(ch);
+                        }
+
+                        next_char = previous_char;
+                        previous_char = *ch;
+                        
+                        if(options->t==1 && flag_t(*ch))
+                        {
+                            continue;
+                        }
+
+                        if (*ch=='\0')
+                        {
+                            fputc(*ch,stdout);
+                        }
+                        else
+                        {     
+                            fputs(ch,stdout);
+                        }
+                        memset(ch,'\0',1024);
+                        }
+                    }
+                fclose(file_name);
+        }
+    }
+    else{
+        printf("No file");
+    }
 }
 
-int flag_e(char ch){
+int flag_e(char ch)
+{
     if (ch=='\n')
     {
         printf("$");
