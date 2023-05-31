@@ -73,6 +73,7 @@ void parser(int argc,char *argv[], opt *options)
 
 void reader (int argc ,char *argv[], opt *options )
 {
+  
   int error =0;
   FILE *file_name = fopen(argv[optind], "r");
   if(file_name){
@@ -95,7 +96,8 @@ void reader (int argc ,char *argv[], opt *options )
               start_line=flag_n(start_line,&count_all_line,*ch);
           }
 
-          if (options->b==1){
+          if (options->b==1)
+          {
               flag_b(previous_char, &count_empty_line, *ch);
           }
 
@@ -179,4 +181,3 @@ int flag_v(char *ch) {
         strcpy(ch, special_symbol[tmp]);
     return tmp;
 }
-
