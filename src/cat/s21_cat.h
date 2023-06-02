@@ -56,4 +56,4 @@ int flag_b(char previous_char, int *count_empty_line, char ch);
 int flag_t(char ch);
 int flag_v(char *ch);
 
-#endif  
+#endif

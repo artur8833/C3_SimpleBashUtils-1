@@ -1,4 +1,4 @@
-#include "s_21cat.h"
+#include "s21_cat.h"
 #include <fcntl.h>
 #include <getopt.h>
 #include <stdio.h>
@@ -7,7 +7,6 @@
 
 int main(int argc, char *argv[]) {
   opt options = {0};
-
   parser(argc, argv, &options);
   
   if (argv[optind]==NULL)
