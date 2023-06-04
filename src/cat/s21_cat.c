@@ -86,10 +86,12 @@ void reader(int argc, char *argv[], opt *options)
       char next_char = ' ';
       char ch[1024] = {'\0'};
 
-      while ((*ch = fgetc(file_name)) != EOF) {
+      while ((*ch = fgetc(file_name)) != EOF) 
+      {
         if (options->s == 1 && flag_s(previous_char, next_char, *ch)) {
           continue;
         }
+        
         if (options->n == 1 && options->b==0) {
           start_line = flag_n(start_line, &count_all_line, *ch);
         }
@@ -121,7 +123,8 @@ void reader(int argc, char *argv[], opt *options)
       }
 
     fclose(file_name);
-    } else {
+    } else 
+    {
       printf("No open file\n");
     }
 
