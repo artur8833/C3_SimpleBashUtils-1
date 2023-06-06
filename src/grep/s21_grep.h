@@ -14,7 +14,7 @@ typedef struct options{
     int c;
     int l;
     int n;
-    char *targ[4096];
+    char template[1024];
 } opt;
 
 
