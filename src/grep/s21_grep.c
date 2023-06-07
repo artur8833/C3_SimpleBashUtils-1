@@ -14,6 +14,7 @@ void reader(int argc, char **argv, opt *options, char *template);
 int suchPattern(char **argv, char *str, char *template, opt *options);
 void generalGerister(int reti);
 void check_file(FILE *fp);
+int checkEnd(char **argv,opt *options);
 
 int mem_template(opt *options) {
   if (strlen(options->template)!=0) {
@@ -27,11 +28,11 @@ int mem_template(opt *options) {
 
  
 int main(int argc, char *argv[])
-{
+{    
     opt options = {0};
     char *template = NULL;
     parser(argc, argv, &options);
-
+    int numn=0;
     
     if (argv[optind]==NULL)
     {
@@ -45,13 +46,22 @@ int main(int argc, char *argv[])
       template = options.template;
       reader(argc, argv, &options, template);
     }
-    
-    else {
+
+    else 
+    {
       printf("grep: flags empty and file...\n");
+    }
+    
+    numn = checkEnd(argv,&options);
+    
+    if(((argc-numn)>1)&&((options.e==1)||(options.i==1)||(options.n==1)))
+    {
+      printf("\n");
     }
 
     return 0;
 }
+
 
 void parser(int argc, char **argv, opt *options) {
   int opt;
@@ -85,24 +95,35 @@ void parser(int argc, char **argv, opt *options) {
   }
 }
 
+int checkEnd(char **argv,opt *options){
+  int numm=0;
+  
+  if (argv[optind]==argv[1])
+  {
+    numm = 2;
+  }
+
+  else if(options->e == 0){
+      numm=optind+1;
+      strcat(options->template, argv[2]); 
+  }
+
+  else
+  {
+    numm=optind;
+  }
+
+  return numm;
+  
+}
+
+
 void reader(int argc, char **argv, opt *options, char *template)
 {
     //printf("done");
     int num=0;
     
-    if (argv[optind]==argv[1]){
-      num = 2;
-    }
-
-    else if(options->e == 0){
-        num=optind+1;
-        strcat(options->template, argv[2]); 
-    }
-
-    else{
-      num=optind;
-    }
-    
+    num=checkEnd(argv,options);
     //printf("tem=%s\n",options->template);
     //printf("optind=%d\n",optind);
     //printf("num=%d\n",num);
@@ -142,7 +163,7 @@ void reader(int argc, char **argv, opt *options, char *template)
                 printf("%s:%d:%s",argv[i] ,line, str);
               }
               else if (suchPattern(argv, str, template,options)){
-                printf("%s", str);
+                printf("%d:%s", line,str);
               }
             }
             
@@ -153,13 +174,20 @@ void reader(int argc, char **argv, opt *options, char *template)
                 printf("%s\n", argv[i]);
               }
             }
-            
-            else if (options->v ==1){
-              if (!suchPattern(argv, str,template,options)){
-                printf("%s", str);
+
+            else if (options->v ==1)
+            {
+              if (!suchPattern(argv, str,template,options)&& (argc-num)>1)
+              {
+                printf("%s:%s",argv[i], str);
+              }
+              else if(!suchPattern(argv, str,template,options))
+              {
+                printf("%s",str);
               }
             }
             
+
             else if(options->c)
             {
               if (suchPattern(argv, str,template,options)){
@@ -175,11 +203,15 @@ void reader(int argc, char **argv, opt *options, char *template)
             }            
           }
 
-
-          if (options->c==1)
+          if ((options->c==1)&& (argc-num)>1)
           {
-            printf("%d\n", count);
+            printf("%s:%d\n", argv[i],count);
           }
+          
+          else if((options->c==1)){
+            printf("%d\n",count);
+          }
+
           fclose(fp);
     }
     
@@ -197,16 +229,6 @@ int suchPattern(char **argv, char *str, char *template, opt *options)
     return !reti;
 }
 
-// void flag_l(char *line, char *str)
-// {
-//   for (int i=0; str[i];i++){
-//     str[i] = tolower(str[i]);
-//   }
-
-//   for (int i = 0; line[i]; i++){
-//     line[i] = tolower(line[i]);
-//   }
-// }
 
 void generalGerister(int reti)
 {

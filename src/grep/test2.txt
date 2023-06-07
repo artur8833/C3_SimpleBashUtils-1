@@ -1,0 +1,2 @@
+test_files/test_2_grep.txt:7:    for (i = 0; i < s1; i++)
+test_files/test_2_grep.txt:9:    for (i = (s1); i < (s1 + s2); i++)
