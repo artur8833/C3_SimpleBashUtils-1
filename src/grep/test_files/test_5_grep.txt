@@ -28,3 +28,5 @@ char get_gnu(const char *argv) {
     }
     return (i == 3 ? '0' : out[i]);
 }
+Int int 
+iNt
