@@ -28,5 +28,6 @@ int suchPattern(char *str, opt *options);
 void generalGerister(int reti);
 void severalFiles(char *argv, opt *options);
 void from_flag_f(opt *options, char *name);
+void print_o(char *string, int flag, opt *options, char *filename,int line_number);
 
 #endif  

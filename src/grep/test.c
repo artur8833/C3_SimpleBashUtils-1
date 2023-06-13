@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
   set_options(&options, argc, argv);
   set_pattern(argv, &options);
-  printf("\n%s\n",options.pattern);
+  //printf("\n%s\n",options.pattern);
   options.files_count = argc - optind;
 
   while (optind < argc) {
@@ -83,6 +83,7 @@ void set_pattern(char **argv, Options *options) {
 
 int set_flags_for_regex(Options options, int flag_) {
   int flag = flag_;
+  
   if (options.i) {  // I - FLAG
     flag |= REG_ICASE;
   }
@@ -154,12 +155,14 @@ void s21_grep(Options *options, char *filename) {
       last_char = line[strlen(line) - 1];
       line_number++;
 
-      int is_match =
-          !search_for_matches(line, options->pattern, flag);  // 1 - yes; 0 - no
+      int is_match =!search_for_matches(line, options->pattern, flag);  // 1 - yes; 0 - no
 
       if (options->v) is_match = !is_match;  // V FLAG
 
-      if (is_match) count_match_lines++;  // counter
+      if (is_match){
+        count_match_lines++;
+        //printf("count=%d\n", count_match_lines);
+      }   // counter
 
       if (is_match && options->l && !options->error) {  // L FLAG
         printf("%s\n", filename);
@@ -182,6 +185,7 @@ void s21_grep(Options *options, char *filename) {
 
     if (options->c && !options->l) {  // C FLAG H FLAG
       // last_char = line[len - 1];
+  
       if (options->files_count > 1 && !options->h) printf("%s:", filename);
 
       printf("%d", count_match_lines);

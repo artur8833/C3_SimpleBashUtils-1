@@ -1,0 +1,8 @@
+#########################################################
+
+grep -c int test_files/test_6_grep.txt
+
+#########################################################
+
+match=0match=0match=0match=0match=0match=0match=0match=0match <
+0								0
