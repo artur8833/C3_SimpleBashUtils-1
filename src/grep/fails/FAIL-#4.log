@@ -1,0 +1,7 @@
+#########################################################
+
+grep ^print test_files/test_ptrn_grep.txt -v -c -o -f test_files/test_ptrn_grep.txt
+
+#########################################################
+
+0							      |	test_files/test_ptrn_grep.txt:1

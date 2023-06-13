@@ -115,20 +115,39 @@ void reader(char **argv, opt *options)
     int count=0;
     int linee =0;
     size_t size = 0;
+    
 
     //printf("f2=%d",options->f);
     while((len = getline(&str, &size, fp)) != -1)
     {
       last_char = str[strlen(str) - 1];
       linee++;  
-      int match = suchPattern(str, options); //1-yes
+      int match = !suchPattern(str, options); //1-yes
       //printf("match=%d", match);
+      //printf("f=%d\n", options->f);
       
       if (match){
         count++;
+        //printf("f=%d\n", options->f);
+        //printf("f=%d\n", options->f);
+        //printf("f=%s\n", str);
       }
 
-      if ((options->e) || (options->i) || (options->h))
+      if ((options->v == 1))
+      {
+        match=!match;
+        //printf("f=%d\n", options->f);
+      }
+
+      else if (options->f){
+        //printf("f1=%d",options->f);
+        if (match){
+          //printf("match=%d\n",match);
+          //printf("%s",str); 
+        }
+      }
+
+      else if ((options->e) || (options->i) || (options->h))
       {
         if (suchPattern(str, options)) {
           severalFiles(argv[optind], options);
@@ -164,12 +183,7 @@ void reader(char **argv, opt *options)
       }
       
 
-      else if(options->f){
-        //printf("f1=%d",options->f);
-        if (suchPattern(str, options)){
-          printf("%s",str); 
-        }
-      }
+
       
       else if (options->c){
         continue;
