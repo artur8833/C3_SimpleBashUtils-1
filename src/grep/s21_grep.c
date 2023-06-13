@@ -122,7 +122,7 @@ void reader(char **argv, opt *options)
     {
       last_char = str[strlen(str) - 1];
       linee++;  
-      int match = !suchPattern(str, options); //1-yes
+      int match = suchPattern(str, options); //1-yes
       //printf("match=%d", match);
       //printf("f=%d\n", options->f);
       
@@ -143,7 +143,7 @@ void reader(char **argv, opt *options)
         //printf("f1=%d",options->f);
         if (match){
           //printf("match=%d\n",match);
-          //printf("%s",str); 
+          printf("%s",str); 
         }
       }
 
