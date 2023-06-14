@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
   set_options(&options, argc, argv);
   set_pattern(argv, &options);
-  //printf("\n%s\n",options.pattern);
+  printf("\n%s\n",options.pattern);
   options.files_count = argc - optind;
 
   while (optind < argc) {

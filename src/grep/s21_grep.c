@@ -11,41 +11,40 @@
 #include <ctype.h>
 
 int mem_template(opt *options, char *pattern) {
-  if (strlen(options->template)==0) {
-    //printf("str=%ld", strlen(options->template));
+  if ((strlen(options->template)==0) ) {
     strcat(options->template, pattern);
   } else {
     strcat(options->template, "\\|");
     strcat(options->template, pattern);
   }
-    
+
   return 0;
 }
  
 int main(int argc, char *argv[])
 {    
   opt options = { 0 };
-  parser(argc, argv, &options);
-  //printf("template=%s\n",options.template);
   
-  if (options.f){
-    reader(argv, &options);
+  if (argc < 2) 
+  {
+    fprintf(stderr, "Usage: s21_grep [OPTION]... PATTERNS [FILE]...");
+    return 1;
   }
 
-  if (!options.e){
+  parser(argc, argv, &options);
+  options.num = argc - optind;
+  
+  if (!options.e && !options.f){
     strcpy(options.template, argv[optind++]); 
   }
   
   options.num = argc - optind;
 
-
-  
   while(optind < argc){
     reader(argv, &options);
     optind++;
   }
   
-
   return 0;
 }
 
@@ -84,15 +83,14 @@ void parser(int argc, char **argv, opt *options) {
         options->o = 1;
         break;
       case 'f':
-        //printf("optarg=%s", optarg);
         from_flag_f(options,optarg);
         break;
-      default:
-        printf("Try grep --help \n");
+      case '?':
+        fprintf(stderr, "Invalid options in %s\n", argv[0]);
         exit(1);
     }
   }
-  //printf("oprions=%d\n",options->f);
+
   if (options->l) options->c = options->o = 0;
   if (options->c) options->o = 0;
   if (options->v && options->o) options->error = 1;
@@ -100,9 +98,7 @@ void parser(int argc, char **argv, opt *options) {
 }
 
 void reader(char **argv, opt *options)
-{  
-  //printf("optind=%d\n",optind);
-  //printf("f4=%s\n",argv[optind]);    
+{     
   FILE *fp;
   if ((fp = fopen(argv[optind], "r")) == NULL) {
     if (!options->s)
@@ -116,124 +112,85 @@ void reader(char **argv, opt *options)
     int linee =0;
     size_t size = 0;
     
-
-    //printf("f2=%d",options->f);
+    //  Создать regcopm
     while((len = getline(&str, &size, fp)) != -1)
     {
       last_char = str[strlen(str) - 1];
       linee++;  
       int match = suchPattern(str, options); //1-yes
-      //printf("match=%d", match);
-      //printf("f=%d\n", options->f);
-      
-      if (match){
-        count++;
-        //printf("f=%d\n", options->f);
-        //printf("f=%d\n", options->f);
-        //printf("f=%s\n", str);
+
+
+      if (options->i && options->f){
+        options->i=0;
       }
 
-      if ((options->v == 1))
-      {
-        match=!match;
-        //printf("f=%d\n", options->f);
-      }
-
-      else if (options->f){
-        //printf("f1=%d",options->f);
-        if (match){
-          //printf("match=%d\n",match);
-          printf("%s",str); 
-        }
-      }
-
-      else if ((options->e) || (options->i) || (options->h))
-      {
-        if (suchPattern(str, options)) {
-          severalFiles(argv[optind], options);
-          printf("%s", str);
-
-          if (last_char != '\n')
-            printf("\n");
-        }
-      }
-        
-      else if (options->n == 1) 
-      {
-        linee++;
-        if (suchPattern(str, options))
-        {
-          severalFiles(argv[optind], options);
-          
-          printf("%d:%s", linee, str);
-        }
-      }
-          
-      else if(options->l == 1)
-      {
-        if (suchPattern(str, options) && (count==0))
-        {
-          printf("%s\n", argv[optind]);
-        }
-      }
-
-      else if ((options->v == 1))
+      if ((options->v))
       {
         match=!match;
       }
-      
-
-
-      
-      else if (options->c){
-        continue;
-      }
-
-      else
-      {
-        if (suchPattern(str, options)) {
-          severalFiles(argv[optind], options);
-          printf("%s", str);
-        }
-      }
-      
-    }
-
-    //printf("count=%d\n",count);
     
+      if (match)
+      {
+        count++;
+        
+      }
+
+
+      if(match && options->l && !options->error)
+      {
+        printf("%s\n", argv[optind]);
+        break;
+      }
+
+      if (options->o && !options->c && !options->l &&!options->error) 
+      {  
+        print_o(str, options, argv[optind], linee);
+      }
+
+      if (match && !options->c && !options->error && !options->o)
+      {
+        if((options->num>1) && (!options->h))
+        {
+          printf("%s:", argv[optind]);
+        }
+
+        if(options->n)
+        {
+          printf("%d:", linee);
+        }
+
+        printf("%s", str);
+        if (last_char != '\n') printf("\n");
+      }
+    } 
+       
+
     if ((options->c == 1) && !options->l)
     {
-      //severalFiles(argv[optind], options);
-      printf("%d\n", count);
+
+      if (options->num > 1 && !options->h) printf("%s:", argv[optind]);
+
+      printf("%d", count);
+
+      if (last_char != '\n' || len == -1) printf("\n");
     }
-    
-    fclose(fp);
+
+    if(str) free(str);
   }
-    // if (options->i){
-  //   flag |= REG_ICASE;
-  // }
-  // if (options->e || options->f || options->o){
-  //   flag |= REG_EXTENDED;
-  // }
+  
+  if (fp) fclose(fp);
 }
 
 int suchPattern(char *str, opt *options)
 {
   regex_t regex;
-  int reti;
-  //int flag;
-  // if (options->i){
-  //   flag |= REG_ICASE;
-  // }
-  // if (options->e || options->f || options->o){
-  //   flag |= REG_EXTENDED;
-  // }
-  //printf("done=%s\n",str);
-  reti = regcomp(&regex, options->template, options->i ? REG_ICASE | REG_EXTENDED : 0 | REG_NEWLINE);
-  generalGerister(reti);
-  reti = regexec(&regex, str, 0, NULL, 0);
+  int result=0;
+ 
+  result = regcomp(&regex, options->template, (options->i ? REG_ICASE : 0 | REG_NEWLINE));
+  generalGerister(result);
+  result = regexec(&regex, str, 0, NULL, 0);
   regfree(&regex);
-  return !reti;
+  return !result;
 }
 
 void severalFiles(char *argv, opt *options) {
@@ -279,18 +236,18 @@ void from_flag_f(opt *options, char *name){
 
 }
 
-void print_o(char *string, int flag, opt *options, char *filename,
-             int line_number) {
+void print_o(char *string, opt *options, char *filename, int line_number) {
   int status;
   regex_t reg;
-  regcomp(&reg, options->template, flag);
+  regcomp(&reg, options->template, (options->i ? REG_ICASE : 0 | REG_NEWLINE));
   char *str = string;
   regmatch_t pmatch[100];
   status = regexec(&reg, str, 1, pmatch, 0);
   while (status == 0) {
-    printf("%s:", filename);
-    printf("%d:", line_number);
-
+    if (options->num>1 && !options->h) printf("%s:", filename);
+    if (options->n) printf("%d:", line_number);
+    
+    
     printf("%.*s\n", (int)(pmatch[0].rm_eo - pmatch[0].rm_so), str + pmatch[0].rm_so);
     str += pmatch[0].rm_eo;
     status = regexec(&reg, str, 1, pmatch, 0);

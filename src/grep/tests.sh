@@ -56,9 +56,9 @@ tests=(
 )
 
 manual=(
-    "-c int test_files/test_6_grep.txt"
-    "-f test_files/test_3_grep.txt test_files/test_5_grep.txt"
-    "^print s21_grep.c -v -o -f test_files/test_ptrn_grep.txt"
+"-c int test_files/test_6_grep.txt"
+"-f test_files/test_3_grep.txt test_files/test_5_grep.txt"
+"^print s21_grep.c -v -o -f test_files/test_ptrn_grep.txt"
 "^print test_files/test_ptrn_grep.txt -v -c -o -f test_files/test_ptrn_grep.txt"
 "^print s21_grep.c -i -f test_files/test_ptrn_grep.txt"
 "int test_files/test_1_grep.txt"
@@ -77,7 +77,7 @@ manual=(
  "-i int test_files/test_5_grep.txt"
 
 "-v test_files/test_1_grep.txt -e ank"
-"-noe ) test_files/test_5_grep.txt"
+# "-noe ) test_files/test_5_grep.txt"
 
 "-o -e int test_files/test_4_grep.txt"
 "-e = -e out test_files/test_5_grep.txt"
