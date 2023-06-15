@@ -1,7 +1,5 @@
 #define  _GNU_SOURCE
-
 #include "s21_grep.h"
-
 #include <sys/types.h>
 #include <regex.h>
 #include <stdio.h>
@@ -10,16 +8,6 @@
 #include <getopt.h>
 #include <ctype.h>
 
-int mem_template(opt *options, char *pattern) {
-  if ((strlen(options->template)==0) ) {
-    strcat(options->template, pattern);
-  } else {
-    strcat(options->template, "\\|");
-    strcat(options->template, pattern);
-  }
-
-  return 0;
-}
  
 int main(int argc, char *argv[])
 {    
@@ -112,7 +100,6 @@ void reader(char **argv, opt *options)
     int linee =0;
     size_t size = 0;
     
-    //  Создать regcopm
     while((len = getline(&str, &size, fp)) != -1)
     {
       last_char = str[strlen(str) - 1];
@@ -134,7 +121,6 @@ void reader(char **argv, opt *options)
         count++;
         
       }
-
 
       if(match && options->l && !options->error)
       {
@@ -181,29 +167,29 @@ void reader(char **argv, opt *options)
   if (fp) fclose(fp);
 }
 
+int mem_template(opt *options, char *pattern) {
+  if ((strlen(options->template)==0) ) {
+    strcat(options->template, pattern);
+  } else {
+    strcat(options->template, "\\|");
+    strcat(options->template, pattern);
+  }
+
+  return 0;
+}
+
 int suchPattern(char *str, opt *options)
 {
   regex_t regex;
   int result=0;
- 
   result = regcomp(&regex, options->template, (options->i ? REG_ICASE : 0 | REG_NEWLINE));
-  generalGerister(result);
-  result = regexec(&regex, str, 0, NULL, 0);
-  regfree(&regex);
-  return !result;
-}
-
-void severalFiles(char *argv, opt *options) {
-  if (options->num > 1 && !options->h)
-    printf("%s:", argv);
-}
-
-void generalGerister(int reti)
-{
-  if (reti) { 
+  if (result){
     fprintf(stderr, "Could not compile regex\n"); 
     exit(1); 
   }
+  result = regexec(&regex, str, 0, NULL, 0);
+  regfree(&regex);
+  return !result;
 }
 
 void from_flag_f(opt *options, char *name){
@@ -246,8 +232,6 @@ void print_o(char *string, opt *options, char *filename, int line_number) {
   while (status == 0) {
     if (options->num>1 && !options->h) printf("%s:", filename);
     if (options->n) printf("%d:", line_number);
-    
-    
     printf("%.*s\n", (int)(pmatch[0].rm_eo - pmatch[0].rm_so), str + pmatch[0].rm_so);
     str += pmatch[0].rm_eo;
     status = regexec(&reg, str, 1, pmatch, 0);
